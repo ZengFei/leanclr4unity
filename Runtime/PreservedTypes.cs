@@ -97,7 +97,8 @@ public class PreservedTypes
 
     // App/thread/context
     public System.AppDomain AppDomain;
-    public System.AppDomainSetup AppDomainSetup;
+    // Type missing when api compatibility level is .netstandard2.x
+    //public System.AppDomainSetup AppDomainSetup;
     public object AppContext;
     public System.Threading.Thread Thread;
     public object InternalThread;
