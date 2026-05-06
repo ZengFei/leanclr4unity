@@ -2,7 +2,7 @@
 
 语言: [中文](./README.md) | [English](./README_EN.md)
 
-[![GitHub](https://img.shields.io/badge/GitHub-leanclr4unity-181717?logo=github)](https://github.com/focus-creative-games/leanclr4unity) [![LeanCLR](https://img.shields.io/badge/LeanCLR-Runtime-181717?logo=github)](https://github.com/focus-creative-games/leanclr) [![license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/focus-creative-games/leanclr4unity/blob/main/LICENSE) [![Discord](https://img.shields.io/badge/Discord-Join-7289DA?logo=discord&logoColor=white)](https://discord.gg/esAYcM6RDQ)
+[![GitHub](https://img.shields.io/badge/GitHub-leanclr4unity-181717?logo=github)](https://github.com/focus-creative-games/leanclr4unity) [![Gitee](https://img.shields.io/badge/Gitee-leanclr4unity-C71D23?logo=gitee&logoColor=white)](https://gitee.com/focus-creative-games/leanclr4unity) [![LeanCLR](https://img.shields.io/badge/LeanCLR-Runtime-181717?logo=github)](https://github.com/focus-creative-games/leanclr) [![license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/focus-creative-games/leanclr4unity/blob/main/LICENSE) [![Discord](https://img.shields.io/badge/Discord-Join-7289DA?logo=discord&logoColor=white)](https://discord.gg/esAYcM6RDQ)
 
 **leanclr4unity** 是 [LeanCLR](https://github.com/focus-creative-games/leanclr/blob/main/README.md) 的 **Unity 集成包**。
 
@@ -39,7 +39,10 @@ LeanCLR 是一个面向全平台的精练的 CLR（Common Language Runtime）实
 
 ### 安装
 
-在Unity Package Manager中点击`Add package from git URL...`，填入 `https://github.com/focus-creative-games/leanclr4unity.git` 即可完成安装。
+在Unity Package Manager中点击`Add package from git URL...`，填入以下任一地址即可完成安装：
+
+- `https://github.com/focus-creative-games/leanclr4unity.git`
+- `https://gitee.com/focus-creative-games/leanclr4unity.git`
 
 ### 设置
 

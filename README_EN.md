@@ -2,7 +2,7 @@
 
 Languages: [中文](./README.md) | [English](./README_EN.md)
 
-[![GitHub](https://img.shields.io/badge/GitHub-leanclr4unity-181717?logo=github)](https://github.com/focus-creative-games/leanclr4unity) [![LeanCLR](https://img.shields.io/badge/LeanCLR-Runtime-181717?logo=github)](https://github.com/focus-creative-games/leanclr) [![license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/focus-creative-games/leanclr4unity/blob/main/LICENSE) [![Discord](https://img.shields.io/badge/Discord-Join-7289DA?logo=discord&logoColor=white)](https://discord.gg/esAYcM6RDQ)
+[![GitHub](https://img.shields.io/badge/GitHub-leanclr4unity-181717?logo=github)](https://github.com/focus-creative-games/leanclr4unity) [![Gitee](https://img.shields.io/badge/Gitee-leanclr4unity-C71D23?logo=gitee&logoColor=white)](https://gitee.com/focus-creative-games/leanclr4unity) [![LeanCLR](https://img.shields.io/badge/LeanCLR-Runtime-181717?logo=github)](https://github.com/focus-creative-games/leanclr) [![license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/focus-creative-games/leanclr4unity/blob/main/LICENSE) [![Discord](https://img.shields.io/badge/Discord-Join-7289DA?logo=discord&logoColor=white)](https://discord.gg/esAYcM6RDQ)
 
 **leanclr4unity** is the **Unity integration package** for [LeanCLR](https://github.com/focus-creative-games/leanclr/blob/main/README.md).
 
@@ -38,7 +38,10 @@ Because this is still an early version, some capabilities are not fully implemen
 
 ### Installation
 
-In Unity Package Manager, click `Add package from git URL...`, then enter `https://github.com/focus-creative-games/leanclr4unity.git`.
+In Unity Package Manager, click `Add package from git URL...`, then use either of the following:
+
+- `https://github.com/focus-creative-games/leanclr4unity.git`
+- `https://gitee.com/focus-creative-games/leanclr4unity.git`
 
 ### Settings
 
