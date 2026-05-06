@@ -73,6 +73,8 @@
 
 #define LEANCLR_CODEGEN_RETURN(value) return value
 
+#define LEANCLR_CODEGEN_RETURN_ERR(err) return err
+
 #define LEANCLR_CODEGEN_RETURN_VOID() \
     do                                \
     {                                 \
@@ -429,8 +431,15 @@ inline vm::InternalCallFunction resolve_internal_call(const char* name)
     return (vm::InternalCallFunction)vm::InternalCalls::get_lite_internal_call(name);
 }
 
+RtErr raise_internal_call_entry_not_found_error(const char* name);
+
 using vm::PInvokeFunction;
-PInvokeFunction resolve_pinvoke_function(const char* name);
+inline PInvokeFunction resolve_pinvoke_function(const char* dll_name_no_ext, const char* function_name)
+{
+    return vm::PInvokes::get_pinvoke_function(dll_name_no_ext, function_name);
+}
+
+RtErr raise_pinvoke_entry_not_found_error(const char* dll_name_no_ext, const char* function_name);
 
 using vm::TempUtf16StringToUtf8Converter;
 
@@ -447,7 +456,6 @@ inline void free_pinvoke_returned_utf8_cstr(const char* str)
     }
 }
 
-RtErr raise_pinvoke_entry_not_found_error(const char* name);
 
 } // namespace codegen
 } // namespace leanclr
