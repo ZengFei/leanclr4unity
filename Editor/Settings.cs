@@ -30,9 +30,8 @@ namespace LeanCLR
     [Serializable]
     public class LeanAOTSettings
     {
-        public int aotPercent = 100;
         public bool layoutValidation;
-        public string ruleFile;
+        public string[] ruleFiles;
     }
 
     public class Settings : ScriptableObject

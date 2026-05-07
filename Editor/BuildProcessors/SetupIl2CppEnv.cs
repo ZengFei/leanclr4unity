@@ -19,6 +19,7 @@
 // SOFTWARE.
 
 using System;
+using System.IO;
 using System.Text;
 using UnityEditor.Build;
 using UnityEditor.Build.Reporting;
@@ -62,30 +63,49 @@ namespace LeanCLR.BuildProcessors
             }
 
             var sb = new StringBuilder();
-            sb.Append("--leanaot-aot-percent ");
-            sb.Append(aot.aotPercent);
             if (aot.layoutValidation)
             {
-                sb.Append(" --leanaot-enable-layout-validation");
+                sb.Append("--leanaot-enable-layout-validation");
             }
 
-            if (!string.IsNullOrEmpty(aot.ruleFile))
+            if (aot.ruleFiles != null)
             {
-                string rulePath = aot.ruleFile.Trim();
-                sb.Append(" --leanaot-aot-rule-file ");
-                if (rulePath.IndexOf(' ') >= 0)
+                string projectRoot = Path.GetFullPath(Path.Combine(Application.dataPath, ".."));
+                foreach (string raw in aot.ruleFiles)
                 {
-                    sb.Append('"');
-                    sb.Append(rulePath.Replace("\"", "\\\""));
-                    sb.Append('"');
-                }
-                else
-                {
-                    sb.Append(rulePath);
+                    if (string.IsNullOrWhiteSpace(raw))
+                    {
+                        continue;
+                    }
+
+                    string trimmed = raw.Trim();
+                    string fullPath = Path.IsPathRooted(trimmed)
+                        ? Path.GetFullPath(trimmed)
+                        : Path.GetFullPath(Path.Combine(projectRoot, trimmed));
+                    if (!File.Exists(fullPath))
+                    {
+                        throw new Exception(
+                            $"LeanCLR: AOT rule file not found. Configured path: '{raw}', resolved to: '{fullPath}'.");
+                    }
+
+                    AppendRuleFileArgument(sb, fullPath);
                 }
             }
 
             return sb.ToString();
+        }
+
+        private static void AppendRuleFileArgument(StringBuilder sb, string absolutePath)
+        {
+            if (sb.Length > 0)
+            {
+                sb.Append(' ');
+            }
+
+            sb.Append("--leanaot-aot-rule-file ");
+            sb.Append('"');
+            sb.Append(absolutePath.Replace("\"", "\\\""));
+            sb.Append('"');
         }
     }
 }
