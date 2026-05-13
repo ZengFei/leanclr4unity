@@ -1,4 +1,6 @@
 #include "leanclr_common.h"
+#include <cstdio>
+#include <cstring>
 #include "vm/object.h"
 #include "metadata/module_def.h"
 #include "utils/string_builder.h"
@@ -197,6 +199,91 @@ RtErr raise_pinvoke_entry_not_found_error(const char* dll_name_no_ext, const cha
     char err_msg[1024];
     snprintf(err_msg, sizeof(err_msg), "P/Invoke entry not found: dll=%s, function=%s", dll_name_no_ext, function_name);
     RET_ERR_WITH_MSG(RtErr::EntryPointNotFound, err_msg);
+}
+
+void* pinvoke_marshal_delegate_to_void_ptr(vm::RtDelegate* del) noexcept
+{
+    const auto r = vm::Marshal::get_function_pointer_for_delegate(del);
+    if (LEANCLR_UNLIKELY(r.is_err()))
+    {
+        return nullptr;
+    }
+    return (void*)r.unwrap();
+}
+
+void* pinvoke_marshal_safe_handle_to_void_ptr(vm::RtObject* obj) noexcept
+{
+    if (obj == nullptr)
+    {
+        return nullptr;
+    }
+    const metadata::RtClass* klass = obj->klass;
+    const metadata::RtFieldInfo* fi = vm::Class::get_field_for_name(klass, "handle", true);
+    if (fi == nullptr)
+    {
+        fi = vm::Class::get_field_for_name(klass, "_handle", true);
+    }
+    if (fi == nullptr)
+    {
+        return nullptr;
+    }
+    const uint8_t* field_addr =
+        reinterpret_cast<const uint8_t*>(obj) + vm::Field::get_field_offset_includes_object_header_for_all_type(fi);
+    return reinterpret_cast<void*>(*reinterpret_cast<const intptr_t*>(field_addr));
+}
+
+RtResult<vm::RtArray*> mono_pinvoke_reverse_marshal_szarray_blittable_copy(const metadata::RtTypeSig* array_param_typesig, const void* native_element_data,
+                                                                          int32_t length) noexcept
+{
+    assert(array_param_typesig != nullptr);
+    if (length < 0)
+    {
+        RET_ERR(RtErr::Overflow);
+    }
+    if (native_element_data == nullptr)
+    {
+        RET_OK(nullptr);
+    }
+    assert(array_param_typesig->ele_type == metadata::RtElementType::SZArray);
+    DECLARING_AND_UNWRAP_OR_RET_ERR_ON_FAIL(metadata::RtClass*, arr_klass, vm::Class::get_class_from_typesig(array_param_typesig));
+    RET_ERR_ON_FAIL(vm::Class::initialize_all(arr_klass));
+    if (!vm::Class::is_blittable(arr_klass->element_class))
+    {
+        RET_ERR(RtErr::NotSupported);
+    }
+    DECLARING_AND_UNWRAP_OR_RET_ERR_ON_FAIL(vm::RtArray*, arr, new_szarray_from_array_class(arr_klass, length));
+    const size_t ele_size = vm::Array::get_array_element_size(arr);
+    std::memcpy(vm::Array::get_array_data_start_as_ptr_void(arr), native_element_data, static_cast<size_t>(length) * ele_size);
+    RET_OK(arr);
+}
+
+RtResult<vm::RtObject*> mono_pinvoke_reverse_marshal_handle(const metadata::RtTypeSig* handle_param_typesig, void* raw_handle) noexcept
+{
+    if (raw_handle == nullptr)
+    {
+        RET_OK(nullptr);
+    }
+    assert (handle_param_typesig != nullptr);
+    assert (handle_param_typesig->ele_type == metadata::RtElementType::Class);
+    DECLARING_AND_UNWRAP_OR_RET_ERR_ON_FAIL(metadata::RtClass*, handle_klass, vm::Class::get_class_from_typesig(handle_param_typesig));
+    RET_ERR_ON_FAIL(vm::Class::initialize_all(handle_klass));
+
+    #if LEANCLR_DEBUG
+
+    const metadata::RtFieldInfo* fi = vm::Class::get_field_for_name(handle_klass, "handle", true);
+    if (fi == nullptr)
+    {
+        fi = vm::Class::get_field_for_name(handle_klass, "_handle", true);
+    }
+    assert(fi != nullptr);
+    // handle field is the first field of the class
+    assert(fi->offset == 0);
+    #endif
+
+    DECLARING_AND_UNWRAP_OR_RET_ERR_ON_FAIL(vm::RtObject*, obj, vm::Object::new_object(handle_klass));
+    void** field_addr = reinterpret_cast<void**>(obj + 1);
+    *field_addr = raw_handle;
+    RET_OK(obj);
 }
 
 } // namespace codegen

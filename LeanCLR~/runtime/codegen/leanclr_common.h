@@ -32,7 +32,7 @@
     do                                                                                                   \
     {                                                                                                    \
         auto&& __result = (retExpr);                                                                     \
-        if (LEANCLR_CODEGEN_UNLIKELY(__result.is_err()))                                                                           \
+        if (LEANCLR_CODEGEN_UNLIKELY(__result.is_err()))                                                 \
         {                                                                                                \
             leanclr::vm::Exception::raise_aot_error_as_exception(__result.unwrap_err(), methodInfo, ip); \
             return leanclr::RtErr::ManagedException;                                                     \
@@ -43,7 +43,7 @@
     do                                                                                                   \
     {                                                                                                    \
         auto&& __result = (retExpr);                                                                     \
-        if (LEANCLR_CODEGEN_UNLIKELY(__result.is_err()))                                                                           \
+        if (LEANCLR_CODEGEN_UNLIKELY(__result.is_err()))                                                 \
         {                                                                                                \
             leanclr::vm::Exception::raise_aot_error_as_exception(__result.unwrap_err(), methodInfo, ip); \
             return leanclr::RtErr::ManagedException;                                                     \
@@ -56,7 +56,7 @@
     do                                                                                                   \
     {                                                                                                    \
         auto&& __result = (retExpr);                                                                     \
-        if (LEANCLR_CODEGEN_UNLIKELY(__result.is_err()))                                                                           \
+        if (LEANCLR_CODEGEN_UNLIKELY(__result.is_err()))                                                 \
         {                                                                                                \
             leanclr::vm::Exception::raise_aot_error_as_exception(__result.unwrap_err(), methodInfo, ip); \
             return leanclr::RtErr::ManagedException;                                                     \
@@ -69,7 +69,7 @@
     do                                                                                                   \
     {                                                                                                    \
         auto&& __result = (retExpr);                                                                     \
-        if (LEANCLR_CODEGEN_UNLIKELY(__result.is_err()))                                                                           \
+        if (LEANCLR_CODEGEN_UNLIKELY(__result.is_err()))                                                 \
         {                                                                                                \
             leanclr::vm::Exception::raise_aot_error_as_exception(__result.unwrap_err(), methodInfo, ip); \
             return leanclr::RtErr::ManagedException;                                                     \
@@ -97,7 +97,7 @@
 #define LEANCLR_CODEGEN_CHECK_NOT_NULL_OR_THROW_NULL_REFERENCE_EXCEPTION(checkVar, methodInfo, ip)               \
     do                                                                                                           \
     {                                                                                                            \
-        if (LEANCLR_CODEGEN_UNLIKELY(!(checkVar)))                                                                                         \
+        if (LEANCLR_CODEGEN_UNLIKELY(!(checkVar)))                                                               \
         {                                                                                                        \
             leanclr::vm::Exception::raise_aot_error_as_exception(leanclr::RtErr::NullReference, methodInfo, ip); \
             return leanclr::RtErr::ManagedException;                                                             \
@@ -116,7 +116,7 @@
     do                                                                                                   \
     {                                                                                                    \
         auto&& __result = (retExpr);                                                                     \
-        if (LEANCLR_CODEGEN_UNLIKELY(__result.is_err()))                                                                           \
+        if (LEANCLR_CODEGEN_UNLIKELY(__result.is_err()))                                                 \
         {                                                                                                \
             leanclr::vm::Exception::raise_aot_error_as_exception(__result.unwrap_err(), methodInfo, ip); \
             return leanclr::RtErr::ManagedException;                                                     \
@@ -127,7 +127,7 @@
     do                                                                                                   \
     {                                                                                                    \
         auto&& __result = (retExpr);                                                                     \
-        if (LEANCLR_CODEGEN_UNLIKELY(__result.is_err()))                                                                           \
+        if (LEANCLR_CODEGEN_UNLIKELY(__result.is_err()))                                                 \
         {                                                                                                \
             leanclr::vm::Exception::raise_aot_error_as_exception(__result.unwrap_err(), methodInfo, ip); \
             return leanclr::RtErr::ManagedException;                                                     \
@@ -140,7 +140,7 @@
     do                                                                                                   \
     {                                                                                                    \
         auto&& __result = (retExpr);                                                                     \
-        if (LEANCLR_CODEGEN_UNLIKELY(__result.is_err()))                                                                           \
+        if (LEANCLR_CODEGEN_UNLIKELY(__result.is_err()))                                                 \
         {                                                                                                \
             leanclr::vm::Exception::raise_aot_error_as_exception(__result.unwrap_err(), methodInfo, ip); \
             return leanclr::RtErr::ManagedException;                                                     \
@@ -153,7 +153,7 @@
     do                                                                                                   \
     {                                                                                                    \
         auto&& __result = (retExpr);                                                                     \
-        if (LEANCLR_CODEGEN_UNLIKELY(__result.is_err()))                                                                           \
+        if (LEANCLR_CODEGEN_UNLIKELY(__result.is_err()))                                                 \
         {                                                                                                \
             leanclr::vm::Exception::raise_aot_error_as_exception(__result.unwrap_err(), methodInfo, ip); \
             return leanclr::RtErr::ManagedException;                                                     \
@@ -167,7 +167,7 @@
 #define LEANCLR_CODEGEN_GOTO_RETURN(value)          \
     do                                              \
     {                                               \
-        ___ret = decltype(___ret)(value);            \
+        ___ret = decltype(___ret)(value);           \
         LEANCLR_CODEGEN_GOTO_HANDLE_RETURN_VALUE(); \
     } while (0)
 
@@ -194,60 +194,60 @@
 #define LEANCLR_CODEGEN_GOTO_CHECK_NOT_NULL_OR_THROW_NULL_REFERENCE_EXCEPTION(checkVar, methodInfo, ip) \
     do                                                                                                  \
     {                                                                                                   \
-        if (LEANCLR_CODEGEN_UNLIKELY(!(checkVar)))                                                                                \
+        if (LEANCLR_CODEGEN_UNLIKELY(!(checkVar)))                                                      \
         {                                                                                               \
             ___ret_err = leanclr::RtErr::NullReference;                                                 \
             LEANCLR_CODEGEN_GOTO_HANDLE_RETURN_ERROR();                                                 \
         }                                                                                               \
     } while (0)
 
-#define LEANCLR_CODEGEN_GOTO_THROW_ON_ERROR(retExpr, methodInfo, ip)                                          \
-    do                                                                                                   \
-    {                                                                                                    \
-        auto&& __result = (retExpr);                                                                     \
-        if (LEANCLR_CODEGEN_UNLIKELY(__result.is_err()))                                                                           \
-        {                                                                                                \
-            ___ret_err = __result.unwrap_err(); \
-            LEANCLR_CODEGEN_GOTO_HANDLE_RETURN_ERROR(); \
-        }                                                                                                \
+#define LEANCLR_CODEGEN_GOTO_THROW_ON_ERROR(retExpr, methodInfo, ip) \
+    do                                                               \
+    {                                                                \
+        auto&& __result = (retExpr);                                 \
+        if (LEANCLR_CODEGEN_UNLIKELY(__result.is_err()))             \
+        {                                                            \
+            ___ret_err = __result.unwrap_err();                      \
+            LEANCLR_CODEGEN_GOTO_HANDLE_RETURN_ERROR();              \
+        }                                                            \
     } while (0)
 
-#define LEANCLR_CODEGEN_GOTO_ASSIGN_OR_THROW_ON_ERROR(retVar, retExpr, methodInfo, ip)                        \
-    do                                                                                                   \
-    {                                                                                                    \
-        auto&& __result = (retExpr);                                                                     \
-        if (LEANCLR_CODEGEN_UNLIKELY(__result.is_err()))                                                                           \
-        {                                                                                                \
-            ___ret_err = __result.unwrap_err(); \
-            LEANCLR_CODEGEN_GOTO_HANDLE_RETURN_ERROR(); \
-        }                                                                                                \
-        retVar = (decltype(retVar))__result.unwrap();                                                    \
+#define LEANCLR_CODEGEN_GOTO_ASSIGN_OR_THROW_ON_ERROR(retVar, retExpr, methodInfo, ip) \
+    do                                                                                 \
+    {                                                                                  \
+        auto&& __result = (retExpr);                                                   \
+        if (LEANCLR_CODEGEN_UNLIKELY(__result.is_err()))                               \
+        {                                                                              \
+            ___ret_err = __result.unwrap_err();                                        \
+            LEANCLR_CODEGEN_GOTO_HANDLE_RETURN_ERROR();                                \
+        }                                                                              \
+        retVar = (decltype(retVar))__result.unwrap();                                  \
     } while (0)
 
-#define LEANCLR_CODEGEN_GOTO_AUTO_DECLARING_ASSIGN_OR_THROW_ON_ERROR(retVar, retExpr, methodInfo, ip)         \
-    decltype((retExpr).unwrap()) retVar;                                                                 \
-    do                                                                                                   \
-    {                                                                                                    \
-        auto&& __result = (retExpr);                                                                     \
-        if (LEANCLR_CODEGEN_UNLIKELY(__result.is_err()))                                                                           \
-        {                                                                                                \
-            ___ret_err = __result.unwrap_err(); \
-            LEANCLR_CODEGEN_GOTO_HANDLE_RETURN_ERROR(); \
-        }                                                                                                \
-        retVar = __result.unwrap();                                                                      \
+#define LEANCLR_CODEGEN_GOTO_AUTO_DECLARING_ASSIGN_OR_THROW_ON_ERROR(retVar, retExpr, methodInfo, ip) \
+    decltype((retExpr).unwrap()) retVar;                                                              \
+    do                                                                                                \
+    {                                                                                                 \
+        auto&& __result = (retExpr);                                                                  \
+        if (LEANCLR_CODEGEN_UNLIKELY(__result.is_err()))                                              \
+        {                                                                                             \
+            ___ret_err = __result.unwrap_err();                                                       \
+            LEANCLR_CODEGEN_GOTO_HANDLE_RETURN_ERROR();                                               \
+        }                                                                                             \
+        retVar = __result.unwrap();                                                                   \
     } while (0)
 
-#define LEANCLR_CODEGEN_GOTO_DECLARING_ASSIGN_OR_THROW_ON_ERROR(retType, retVar, retExpr, methodInfo, ip)     \
-    retType retVar;                                                                                      \
-    do                                                                                                   \
-    {                                                                                                    \
-        auto&& __result = (retExpr);                                                                     \
-        if (LEANCLR_CODEGEN_UNLIKELY(__result.is_err()))                                                                           \
-        {                                                                                                \
-            ___ret_err = __result.unwrap_err(); \
-            LEANCLR_CODEGEN_GOTO_HANDLE_RETURN_ERROR(); \
-        }                                                                                                \
-        retVar = (retType)__result.unwrap();                                                             \
+#define LEANCLR_CODEGEN_GOTO_DECLARING_ASSIGN_OR_THROW_ON_ERROR(retType, retVar, retExpr, methodInfo, ip) \
+    retType retVar;                                                                                       \
+    do                                                                                                    \
+    {                                                                                                     \
+        auto&& __result = (retExpr);                                                                      \
+        if (LEANCLR_CODEGEN_UNLIKELY(__result.is_err()))                                                  \
+        {                                                                                                 \
+            ___ret_err = __result.unwrap_err();                                                           \
+            LEANCLR_CODEGEN_GOTO_HANDLE_RETURN_ERROR();                                                   \
+        }                                                                                                 \
+        retVar = (retType)__result.unwrap();                                                              \
     } while (0)
 
 #if LEANCLR_FATAL_ON_RAISE_NOT_IMPLEMENTED_ERROR
@@ -255,6 +255,9 @@
 #else
 #define LEANCLR_CODEGEN_RETURN_NOT_IMPLEMENTED_ERROR() LEANCLR_CODEGEN_RETURN(leanclr::RtErr::NotImplemented)
 #endif
+
+
+#define LEANCLR_CODEGEN_ABORT_WHEN_RAISE_EXCEPTION_IN_MONO_PINVOKE_CALLBACK() std::abort()
 
 namespace leanclr
 {
@@ -460,9 +463,9 @@ inline int32_t get_array_length(const vm::RtArray* array) noexcept
     return vm::Array::get_array_length(array);
 }
 
-inline metadata::RtClass* get_array_element_class(const vm::RtArray* array) noexcept
+inline const metadata::RtClass* get_array_element_class(const vm::RtArray* array) noexcept
 {
-    return const_cast<metadata::RtClass*>(vm::Array::get_array_element_class(array));
+    return vm::Array::get_array_element_class(array);
 }
 
 inline bool is_array_index_out_of_range(const vm::RtArray* array, int32_t index) noexcept
@@ -537,7 +540,7 @@ inline uint32_t get_class_instance_size_without_object_header(const metadata::Rt
 
 inline uint32_t get_class_field_count(const metadata::RtClass* klass) noexcept
 {
-    return klass->field_count;
+    return  klass->field_count;
 }
 
 inline uint32_t get_class_static_size(const metadata::RtClass* klass) noexcept
@@ -609,6 +612,24 @@ inline void free_pinvoke_returned_utf8_cstr(const char* str) noexcept
         std::free(const_cast<char*>(str));
     }
 }
+
+/// P/Invoke: single-target delegate -> native function pointer (void*). Multicast with more than one
+/// invocation entry returns nullptr (see vm::Marshal::get_function_pointer_for_delegate).
+void* pinvoke_marshal_delegate_to_void_ptr(vm::RtDelegate* del) noexcept;
+
+/// P/Invoke: SafeHandle / CriticalHandle (or derived) -> raw handle for native APIs.
+void* pinvoke_marshal_safe_handle_to_void_ptr(vm::RtObject* obj) noexcept;
+
+/// MonoPInvokeCallback / reverse P/Invoke: native points at a contiguous element buffer; build a managed
+/// SZArray by copying bytes into a new array (element type must be blittable).
+/// \a array_param_typesig must be the method parameter's full array type (typically \c RtElementType::SZArray)
+/// from \c RtMethodInfo::parameters (same slot as the formal parameter, excluding implicit \c this).
+RtResult<vm::RtArray*> mono_pinvoke_reverse_marshal_szarray_blittable_copy(const metadata::RtTypeSig* array_param_typesig, const void* native_element_data,
+                                                                          int32_t length) noexcept;
+
+/// MonoPInvokeCallback / reverse P/Invoke: native raw handle pointer -> managed SafeHandle / CriticalHandle (or derived).
+/// \a handle_param_typesig must match \c RtMethodInfo::parameters for that formal (excluding implicit \c this).
+RtResult<vm::RtObject*> mono_pinvoke_reverse_marshal_handle(const metadata::RtTypeSig* handle_param_typesig, void* raw_handle) noexcept;
 
 } // namespace codegen
 } // namespace leanclr

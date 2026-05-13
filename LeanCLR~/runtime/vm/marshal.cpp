@@ -2,8 +2,10 @@
 
 #include "alloc/general_allocation.h"
 #include "rt_string.h"
+#include "rt_array.h"
 #include "class.h"
 #include "field.h"
+#include "metadata/aot_module.h"
 #include "utils/string_util.h"
 #include "utils/string_builder.h"
 #include "platform/kernel32.h"
@@ -138,19 +140,48 @@ RtResult<intptr_t> Marshal::offset_of(vm::RtReflectionType* ref_type, const char
     RET_OK(static_cast<intptr_t>(offset));
 }
 
-RtResult<void*> Marshal::unsafe_addr_of_pinned_array_element(vm::RtArray* arr, int32_t index)
-{
-    RETURN_NOT_IMPLEMENTED_ERROR();
-}
-
 RtResult<RtDelegate*> Marshal::marshal_function_pointer_to_delegate(void* ptr, metadata::RtClass* delegate_class)
 {
     RETURN_NOT_IMPLEMENTED_ERROR();
 }
 
-RtResult<void*> Marshal::get_function_pointer_for_delegate(RtDelegate* delegate)
+RtResult<metadata::RtNativeMethodPointer> Marshal::get_function_pointer_for_delegate(RtDelegate* delegate)
 {
-    RETURN_NOT_IMPLEMENTED_ERROR();
+    if (delegate == nullptr)
+    {
+        RET_OK(nullptr);
+    }
+    auto* md = reinterpret_cast<RtMulticastDelegate*>(delegate);
+    RtDelegate* single = nullptr;
+    if (md->deles != nullptr)
+    {
+        const int32_t len = Array::get_array_length(md->deles);
+        if (len != 1)
+        {
+            RET_ERR(RtErr::NotSupported);
+        }
+        single = *Array::get_array_data_start_as<RtDelegate*>(md->deles);
+    }
+    else
+    {
+        single = &md->dele;
+    }
+    if (single == nullptr)
+    {
+        RET_OK(nullptr);
+    }
+    const metadata::RtMethodInfo* target_method = single->method;
+    if (target_method == nullptr)
+    {
+        RET_ERR(RtErr::NotSupported);
+    }
+    const metadata::RtAotMethodMonoPInvokeCallbackData* cb =
+        metadata::AotModule::find_mono_pinvoke_callback_method(target_method->parent->image, target_method->token);
+    if (cb == nullptr || cb->native_method_ptr == nullptr)
+    {
+        RET_ERR(RtErr::NotSupported);
+    }
+    RET_OK(cb->native_method_ptr);
 }
 
 int32_t Marshal::get_last_win32_error()
