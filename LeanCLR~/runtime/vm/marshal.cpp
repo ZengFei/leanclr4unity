@@ -10,7 +10,7 @@
 #include "metadata/aot_module.h"
 #include "utils/string_util.h"
 #include "utils/string_builder.h"
-#include "platform/kernel32.h"
+#include "platform/rt_sys.h"
 
 namespace leanclr
 {
@@ -93,25 +93,26 @@ vm::RtString* Marshal::ptr_to_string_bstr(void* ptr)
         RET_OK(nullptr);
     }
     const Utf16Char* bstr = reinterpret_cast<const Utf16Char*>(ptr);
-    uint32_t len = *reinterpret_cast<const uint32_t*>((const uint8_t*)bstr - sizeof(uint32_t));
+    int32_t len = *reinterpret_cast<const int32_t*>((const uint8_t*)bstr - sizeof(int32_t));
     assert((uintptr_t)bstr % 2 == 0);
     // null terminator
     assert(bstr[len] == 0);
     return String::create_string_from_utf16chars(bstr, len);
 }
 
-Utf16Char* Marshal::alloc_bstr(size_t utf16char_count)
+Utf16Char* Marshal::alloc_bstr(int32_t utf16char_count)
 {
     // make sure alignment to 4 because this str is used as bstr which is a length-prefixed(4 bytes) double byte. its length should alignment to 4
-    return (Utf16Char*)alloc::GeneralAllocation::calloc(utf16char_count + 2 /* length is 4 bytes */ + 1 /* null terminator */, sizeof(Utf16Char));
+    return (Utf16Char*)alloc::GeneralAllocation::calloc(static_cast<size_t>(utf16char_count + 2 /* length is 4 bytes */ + 1 /* null terminator */), sizeof(Utf16Char));
 }
 
-void* Marshal::buffer_to_bstr(const Utf16Char* chars, size_t len)
+void* Marshal::buffer_to_bstr(const Utf16Char* chars, int32_t len)
 {
+    assert(len >= 0);
     Utf16Char* bstr = alloc_bstr(len);
-    *reinterpret_cast<int32_t*>(bstr) = static_cast<int32_t>(len);
+    *reinterpret_cast<int32_t*>(bstr) = len;
     Utf16Char* str_start = bstr + 2;
-    std::memcpy(str_start, chars, len * sizeof(Utf16Char));
+    std::memcpy(str_start, chars, static_cast<size_t>(len) * sizeof(Utf16Char));
     str_start[len] = 0;
     // return address of the string start
     return str_start;
@@ -378,12 +379,12 @@ RtResult<bool> Marshal::get_marshal_spec(const metadata::RtFieldInfo* field, met
 
 int32_t Marshal::get_last_win32_error()
 {
-    return platform::Kernel32::get_last_win32_error();
+    return platform::RtSys::get_last_win32_error();
 }
 
 void Marshal::set_last_win32_error(int32_t error)
 {
-    platform::Kernel32::set_last_win32_error(error);
+    platform::RtSys::set_last_win32_error(error);
 }
 
 } // namespace vm
