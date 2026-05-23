@@ -197,7 +197,7 @@ typedef double float64_t;
 #endif
 
 #if !defined (LEANCLR_GC_MARK_SWEEP) && !defined (LEANCLR_GC_ZERO_GC)
-#define LEANCLR_GC_MARK_SWEEP 1 
+#define LEANCLR_GC_ZERO_GC 1 
 #endif
 
 // UNITY_VERSION (and optionally UNITY_TUANJIE_ENGINE) must be supplied as

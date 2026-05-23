@@ -1,11 +1,11 @@
 #pragma once
 
-#if LEANCLR_GC_ZERO_GC
-
 #include "gc/gc_alloc_site.h"
 #include "gc/gc_pressure.h"
 #include "metadata/rt_metadata.h"
 #include "vm/rt_managed_types.h"
+
+#if LEANCLR_GC_ZERO_GC
 
 namespace leanclr
 {
@@ -32,8 +32,15 @@ class ZeroGcHeap
     // static vm::RtObject* allocate_object_not_contains_references(const metadata::RtClass* klass, size_t size);
     static vm::RtObject* allocate_array(const metadata::RtClass* arrClass, size_t totalBytes);
 
-    static void write_barrier(vm::RtObject** obj_ref_location, vm::RtObject* new_obj);
-    static bool has_strict_wbarriers();
+    static void write_barrier(vm::RtObject** obj_ref_location, vm::RtObject* new_obj)
+    {
+        *obj_ref_location = new_obj;
+    }
+
+    static bool has_strict_wbarriers()
+    {
+        return false;
+    }
 
     static int64_t get_used_size();
     static int64_t get_heap_size();
