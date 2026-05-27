@@ -18,19 +18,17 @@ For a complete background, comparisons with CoreCLR / Mono / IL2CPP, roadmap, an
 
 ### Supported Unity versions and platforms
 
-- Unity Editor on Windows and macOS is currently supported. Linux support will be added in future releases.
+- Supports Unity Editor on Windows and macOS.
 - Supports all Unity versions from Unity 2021 to Unity 6000 (including both LTS and non-LTS releases).
 - Supports all versions of Tuanjie Engine.
 - Supports WebGL and MiniGame platforms.
+- Supports all mini-game platforms supported by Unity, including WeChat Mini Game and Douyin Mini Game.
 - Other platforms (for example, Win64) are partially supported, but only in single-thread mode. Manual edits to generated platform build project files **may** be required. For example, when publishing Win64 on Unity 6000, remove IL2CPP command-line argument `--static-lib-il2-cpp` from `Il2CppOutputProject.vcxproj`; otherwise startup may fail with `il2cpp init failed`.
 
 ### Limitations
 
-Because this is still an early version, some capabilities are not fully implemented yet.
-
-- **GC is not supported yet**, but planned for an upcoming release.
+- **GC is under development and is expected to be officially supported in June 2026.**
 - Single-thread execution only.
-- Only P/Invoke functions introduced by `mscorlib` and Unity engine DLLs are supported. P/Invoke functions defined in user assemblies are not supported.
 
 ### Sample project
 

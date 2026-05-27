@@ -23,15 +23,13 @@ LeanCLR 是一个面向全平台的精练的 CLR（Common Language Runtime）实
 - 支持Unity 2021 - 6000 所有版本（含LTS和非LTS版本）
 - 支持团结引擎所有版本
 - 支持WebGL和MiniGame平台
+- 支持微信小游戏、抖音小游戏等所有Unity支持的小游戏平台
 - 部分支持其他平台（如Win64），但仅支持单线程，并且**可能**需要手动修改相应平台的构建工程文件（如Unity 6000 发布Win64平台时需要在Il2CppOutputProject.vcxproj文件中移除il2cpp的命令行参数`--static-lib-il2-cpp`，否则启动时会有 `il2cpp init failed`错误。）
 
 ### 限制
 
-由于目前还处于早期版本，某些方面实现还不完整。
-
-- **不支持GC**，但后续版本很快会跟进
+- **GC正在开发中，预计在2026年6月份正式支持**
 - 只支持单线程
-- 仅支持mscorlib和Unity引擎的dll中引入的pinvoke函数，不支持用户程序集中定义pinvoke函数。
 
 ### 示例项目
 
