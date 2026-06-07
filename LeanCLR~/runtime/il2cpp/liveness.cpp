@@ -1,6 +1,10 @@
 #include "liveness.h"
 
+#include <cstdint>
+
+#include "alloc/general_allocation.h"
 #include "utils/hashmap.h"
+#include "utils/mem_op.h"
 #include "vm/class.h"
 #include "vm/field.h"
 #include "vm/object.h"
@@ -18,10 +22,29 @@ class AddressMarker
   private:
     static_assert((MIN_OBJECT_SIZE & (MIN_OBJECT_SIZE - 1)) == 0, "MIN_OBJECT_SIZE must be a power of two");
     static_assert((SEGMENT_SIZE_BYTE_COUNT & (SEGMENT_SIZE_BYTE_COUNT - 1)) == 0, "SEGMENT_SIZE_BYTE_COUNT must be a power of two");
+    static_assert(SEGMENT_SIZE_BYTE_COUNT % sizeof(size_t) == 0, "SEGMENT_SIZE_BYTE_COUNT must be a multiple of sizeof(size_t)");
 
-    static constexpr size_t SEGMENT_BIT_COUNT = (SEGMENT_SIZE_BYTE_COUNT) * 8 /* bit of uint8_t */;
+    static constexpr size_t kBitsPerWord = sizeof(size_t) * 8;
+    static constexpr size_t kSegmentWordCount = SEGMENT_SIZE_BYTE_COUNT / sizeof(size_t);
+    static constexpr size_t kSegmentBitCount = kSegmentWordCount * kBitsPerWord;
+    static constexpr size_t kInvalidSegmentIndex = static_cast<size_t>(-1);
 
-    utils::HashMap<size_t, uint8_t*> _segment_map;
+    utils::HashMap<size_t, size_t*> _segment_map;
+    mutable size_t _cached_segment_index = kInvalidSegmentIndex;
+    mutable size_t* _cached_segment = nullptr;
+
+    size_t* get_or_create_segment_slow(size_t segment_index)
+    {
+        auto it = _segment_map.find(segment_index);
+        if (it == _segment_map.end())
+        {
+            size_t* segment = alloc::GeneralAllocation::calloc_any<size_t>(kSegmentWordCount);
+            it = _segment_map.emplace(segment_index, segment).first;
+        }
+        _cached_segment_index = segment_index;
+        _cached_segment = it->second;
+        return _cached_segment;
+    }
 
   public:
     ~AddressMarker()
@@ -32,44 +55,22 @@ class AddressMarker
         }
     }
 
-    bool is_marked(void* address) const
+    bool mark(void* address)
     {
-        size_t obj_index = reinterpret_cast<size_t>(address) / MIN_OBJECT_SIZE;
-        size_t segment_index = obj_index / SEGMENT_BIT_COUNT;
-        auto it = _segment_map.find(segment_index);
-        if (it == _segment_map.end())
+        const size_t obj_index = reinterpret_cast<uintptr_t>(address) / MIN_OBJECT_SIZE;
+        const size_t segment_index = obj_index / kSegmentBitCount;
+        // kInvalidSegmentIndex is SIZE_MAX; no real segment_index can collide with it.
+        size_t* segment = segment_index == _cached_segment_index ? _cached_segment : get_or_create_segment_slow(segment_index);
+        const size_t bit_index_in_segment = obj_index % kSegmentBitCount;
+        const size_t word_index = bit_index_in_segment / kBitsPerWord;
+        const size_t bit_in_word = bit_index_in_segment % kBitsPerWord;
+        const size_t mask = static_cast<size_t>(1) << bit_in_word;
+        if (segment[word_index] & mask)
         {
             return false;
         }
-        uint8_t* segment = it->second;
-        size_t obj_index_in_segment = obj_index % SEGMENT_BIT_COUNT;
-        return segment[obj_index_in_segment / 8] & (1 << (obj_index_in_segment % 8));
-    }
-
-    bool mark(void* address)
-    {
-        size_t obj_index = reinterpret_cast<size_t>(address) / MIN_OBJECT_SIZE;
-        size_t segment_index = obj_index / SEGMENT_BIT_COUNT;
-        size_t obj_index_in_segment = obj_index % SEGMENT_BIT_COUNT;
-        auto it = _segment_map.find(segment_index);
-        uint8_t* segment;
-        if (it == _segment_map.end())
-        {
-            segment = alloc::GeneralAllocation::calloc_any<uint8_t>(SEGMENT_SIZE_BYTE_COUNT);
-            it = _segment_map.emplace(segment_index, segment).first;
-            segment[obj_index_in_segment / 8] |= 1 << (obj_index_in_segment % 8);
-            return true;
-        }
-        else
-        {
-            segment = it->second;
-            if (segment[obj_index_in_segment / 8] & (1 << (obj_index_in_segment % 8)))
-            {
-                return false;
-            }
-            segment[obj_index_in_segment / 8] |= 1 << (obj_index_in_segment % 8);
-            return true;
-        }
+        segment[word_index] |= mask;
+        return true;
     }
 };
 
@@ -152,32 +153,42 @@ void Liveness::free_struct(void* state)
 
 static void process_object(vm::RtObject* obj, LivenessState* state);
 
-static void visit_normal_object(vm::RtObject* obj, LivenessState* state)
+static void visit_gc_bitmap(const metadata::RtClass* klass, uint8_t* slot_base, LivenessState* state)
 {
-    const metadata::RtClass* klass = obj->klass;
-    for (size_t i = vm::Class::kFirstGCBitmapBitIndex; i < klass->gc_bitmap_bit_count; ++i)
+    const size_t bit_count = klass->gc_bitmap_bit_count;
+    const size_t start_bit = vm::Class::kFirstGCBitmapBitIndex;
+    if (bit_count <= start_bit)
     {
-        if (vm::Class::has_reference_at_bitmap_bit_index(klass, i))
+        return;
+    }
+
+    const size_t* bitmap = klass->gc_bitmap;
+    const size_t kBitsPerWord = vm::Class::kBitsPerWord;
+    const size_t start_word = start_bit / kBitsPerWord;
+    const size_t end_word = (bit_count + kBitsPerWord - 1) / kBitsPerWord;
+
+    for (size_t w = start_word; w < end_word; ++w)
+    {
+        size_t word = bitmap[w];
+        while (word != 0)
         {
-            uint8_t* field_address = reinterpret_cast<uint8_t*>(obj) + i * sizeof(void*);
-            vm::RtObject* field_obj = *reinterpret_cast<vm::RtObject**>(field_address);
-            process_object(field_obj, state);
+            const size_t bit_in_word = utils::MemOp::count_trailing_zeros_nonzero(word);
+            const size_t bit_index = w * kBitsPerWord + bit_in_word;
+            vm::RtObject** slot = reinterpret_cast<vm::RtObject**>(slot_base + bit_index * sizeof(void*));
+            process_object(*slot, state);
+            word &= word - 1;
         }
     }
 }
 
+static void visit_normal_object(vm::RtObject* obj, LivenessState* state)
+{
+    visit_gc_bitmap(obj->klass, reinterpret_cast<uint8_t*>(obj), state);
+}
+
 static void visit_value_type(uint8_t* data, LivenessState* state, const metadata::RtClass* value_type_class)
 {
-    // TODO: optimize this, it's not efficient to iterate over the whole bitmap,
-    // a better way is assign by word
-    for (size_t i = vm::Class::kFirstGCBitmapBitIndex; i < value_type_class->gc_bitmap_bit_count; ++i)
-    {
-        if (vm::Class::has_reference_at_bitmap_bit_index(value_type_class, i))
-        {
-            vm::RtObject* obj = *reinterpret_cast<vm::RtObject**>(data - sizeof(vm::RtObject) + i * sizeof(void*));
-            process_object(obj, state);
-        }
-    }
+    visit_gc_bitmap(value_type_class, data - vm::RT_OBJECT_HEADER_SIZE, state);
 }
 
 static void visit_array_object(vm::RtArray* obj, LivenessState* state)
