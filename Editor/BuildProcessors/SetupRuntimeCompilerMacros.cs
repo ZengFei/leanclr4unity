@@ -66,7 +66,9 @@ namespace LeanCLR.BuildProcessors
             }
 
             var ver = installerController.CurVersion;
-            string inner = BuildCompilerDefineFlags(ver);
+            
+            string[] lazyLoadedAssemblyNames = Settings.Instance.leanAOTSettings?.lazyLoadedAssemblyNames;
+            string inner = BuildCompilerDefineFlags(ver, lazyLoadedAssemblyNames);
             string block = $"--compiler-flags=\"{inner}\"";
             string merged = string.IsNullOrWhiteSpace(stripped) ? block : $"{stripped} {block}";
             PlayerSettings.SetAdditionalIl2CppArgs(merged.Trim());
@@ -74,8 +76,9 @@ namespace LeanCLR.BuildProcessors
         }
 
         /// <summary>
-        /// Removes LeanCLR-owned UNITY_VERSION / UNITY_TUANJIE_ENGINE / GC preprocessor flags
-        /// (-D... and legacy /D...) from any quoted --compiler-flags="..." segments before re-applying.
+        /// Removes LeanCLR-owned UNITY_VERSION / UNITY_TUANJIE_ENGINE / GC / placeholder-assembly
+        /// preprocessor flags (-D... and legacy /D...) from any quoted --compiler-flags="..." segments
+        /// before re-applying.
         /// </summary>
         internal static string StripUnityVersionCompilerDefines(string additionalIl2CppArgs)
         {
@@ -121,6 +124,8 @@ namespace LeanCLR.BuildProcessors
             s = Regex.Replace(s, @"(?:^|[\s]+)/D\s*LEANCLR_GC_MARK_SWEEP\s*=\s*\d+", " ", opt);
             s = Regex.Replace(s, @"(?:^|[\s]+)-D\s*LEANCLR_GC_DEBUG\s*=\s*\d+", " ", opt);
             s = Regex.Replace(s, @"(?:^|[\s]+)/D\s*LEANCLR_GC_DEBUG\s*=\s*\d+", " ", opt);
+            s = Regex.Replace(s, @"(?:^|[\s]+)-D\s*LEANCLR_PLACEHOLDER_ASSEMBLY_NAMES\s*=\S+", " ", opt);
+            s = Regex.Replace(s, @"(?:^|[\s]+)/D\s*LEANCLR_PLACEHOLDER_ASSEMBLY_NAMES\s*=\S+", " ", opt);
             return s.Trim();
         }
 
@@ -137,7 +142,7 @@ namespace LeanCLR.BuildProcessors
         /// <summary>
         /// IL2CPP additional args use Clang-style -D defines for all targets (Unity IL2CPP toolchain).
         /// </summary>
-        internal static string BuildCompilerDefineFlags(UnityVersion ver)
+        internal static string BuildCompilerDefineFlags(UnityVersion ver, string[] lazyLoadedAssemblyNames)
         {
             int packed = ver.major * 10000 + ver.minor1 * 100 + ver.minor2;
             var sb = new StringBuilder(64);
@@ -165,6 +170,11 @@ namespace LeanCLR.BuildProcessors
                 sb.Append(" -DLEANCLR_GC_DEBUG=1");
             }
 
+            if (lazyLoadedAssemblyNames != null)
+            {
+                sb.Append(" -DLEANCLR_PLACEHOLDER_ASSEMBLY_NAMES=").Append(string.Join(",", lazyLoadedAssemblyNames));
+            }
+            
             return sb.ToString();
         }
     }
