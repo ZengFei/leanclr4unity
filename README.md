@@ -32,7 +32,7 @@ LeanCLR 是一个面向全平台的精练的 CLR（Common Language Runtime）实
 
 ### 示例项目
 
-- [leanclr-unity_demo](https://github.com/focus-creative-games/leanclr-unity_demo)
+- [leanclr-unity-demo](https://github.com/focus-creative-games/leanclr-unity-demo)
 
 ### 安装
 

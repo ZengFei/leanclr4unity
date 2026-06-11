@@ -31,7 +31,7 @@ For a complete background, comparisons with CoreCLR / Mono / IL2CPP, roadmap, an
 
 ### Sample project
 
-- [leanclr-unity_demo](https://github.com/focus-creative-games/leanclr-unity_demo)
+- [leanclr-unity-demo](https://github.com/focus-creative-games/leanclr-unity-demo)
 
 ### Installation
 
