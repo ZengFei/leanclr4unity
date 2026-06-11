@@ -2,9 +2,9 @@
 
 语言: [中文](./README.md) | [English](./README_EN.md)
 
-[![GitHub](https://img.shields.io/badge/GitHub-leanclr4unity-181717?logo=github)](https://github.com/focus-creative-games/leanclr4unity) [![Gitee](https://img.shields.io/badge/Gitee-leanclr4unity-C71D23?logo=gitee&logoColor=white)](https://gitee.com/focus-creative-games/leanclr4unity) [![LeanCLR](https://img.shields.io/badge/LeanCLR-Runtime-181717?logo=github)](https://github.com/focus-creative-games/leanclr) [![license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/focus-creative-games/leanclr4unity/blob/main/LICENSE) [![Discord](https://img.shields.io/badge/Discord-Join-7289DA?logo=discord&logoColor=white)](https://discord.gg/esAYcM6RDQ)
+[![GitHub](https://img.shields.io/badge/GitHub-leanclr--unity-181717?logo=github)](https://github.com/focus-creative-games/leanclr-unity) [![Gitee](https://img.shields.io/badge/Gitee-leanclr--unity-C71D23?logo=gitee&logoColor=white)](https://gitee.com/focus-creative-games/leanclr-unity) [![LeanCLR](https://img.shields.io/badge/LeanCLR-Runtime-181717?logo=github)](https://github.com/focus-creative-games/leanclr) [![license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/focus-creative-games/leanclr-unity/blob/main/LICENSE) [![Discord](https://img.shields.io/badge/Discord-Join-7289DA?logo=discord&logoColor=white)](https://discord.gg/esAYcM6RDQ)
 
-**leanclr4unity** 是 [LeanCLR](https://github.com/focus-creative-games/leanclr/blob/main/README.md) 的 **Unity 集成包**。
+**leanclr-unity** 是 [LeanCLR](https://github.com/focus-creative-games/leanclr/blob/main/README.md) 的 **Unity 集成包**。
 
 本仓库（包名 `com.code-philosophy.leanclr`）负责 Unity Editor 侧集成、构建管线衔接与发布工作流；**LeanCLR 运行时** 为独立仓库 [LeanCLR](https://github.com/focus-creative-games/leanclr)。
 
@@ -32,14 +32,14 @@ LeanCLR 是一个面向全平台的精练的 CLR（Common Language Runtime）实
 
 ### 示例项目
 
-- [leanclr4unity_demo](https://github.com/focus-creative-games/leanclr4unity_demo)
+- [leanclr-unity_demo](https://github.com/focus-creative-games/leanclr-unity_demo)
 
 ### 安装
 
 在Unity Package Manager中点击`Add package from git URL...`，填入以下任一地址即可完成安装：
 
-- `https://github.com/focus-creative-games/leanclr4unity.git`
-- `https://gitee.com/focus-creative-games/leanclr4unity.git`
+- `https://github.com/focus-creative-games/leanclr-unity.git`
+- `https://gitee.com/focus-creative-games/leanclr-unity.git`
 
 ### 设置
 
@@ -61,12 +61,12 @@ LeanCLR 是一个面向全平台的精练的 CLR（Common Language Runtime）实
 
 无需任何操作，本插件会自动在发布时使用leanclr替换il2cpp。
 
-leanclr4unity在构建过程中会调用leanaot将所有aot dll复制到`Library/LeanCLR/ManagedStripped/{buildTarget}`目录，这些
+leanclr-unity在构建过程中会调用leanaot将所有aot dll复制到`Library/LeanCLR/ManagedStripped/{buildTarget}`目录，这些
 aot dll可用于lazy load。
 
 ### 注意事项
 
-- 如果Lazy Loaded也有部分代码被编译到aot（即没有在aot.xml中对该程序集禁用aot），则要求加载Lazy Loaded程序集必须跟构建过程中的生成的裁剪后的aot dll完全一致。因此并不能直接使用 Compile Dll生成的程序集，必须使用打包时生成的裁剪后的aot dll。leanclr4unity在构建过程中会调用leanaot将所有aot dll复制到`Library/LeanCLR/ManagedStripped/{buildTarget}`目录，从该目录获取lazy load所用的dll。
+- 如果Lazy Loaded也有部分代码被编译到aot（即没有在aot.xml中对该程序集禁用aot），则要求加载Lazy Loaded程序集必须跟构建过程中的生成的裁剪后的aot dll完全一致。因此并不能直接使用 Compile Dll生成的程序集，必须使用打包时生成的裁剪后的aot dll。leanclr-unity在构建过程中会调用leanaot将所有aot dll复制到`Library/LeanCLR/ManagedStripped/{buildTarget}`目录，从该目录获取lazy load所用的dll。
 
 ## 相关仓库
 
@@ -83,4 +83,4 @@ aot dll可用于lazy load。
 
 ## 许可证
 
-使用 [MIT License](https://github.com/focus-creative-games/leanclr4unity/blob/main/LICENSE)。
+使用 [MIT License](https://github.com/focus-creative-games/leanclr-unity/blob/main/LICENSE)。

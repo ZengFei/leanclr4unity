@@ -2,9 +2,9 @@
 
 Languages: [中文](./README.md) | [English](./README_EN.md)
 
-[![GitHub](https://img.shields.io/badge/GitHub-leanclr4unity-181717?logo=github)](https://github.com/focus-creative-games/leanclr4unity) [![Gitee](https://img.shields.io/badge/Gitee-leanclr4unity-C71D23?logo=gitee&logoColor=white)](https://gitee.com/focus-creative-games/leanclr4unity) [![LeanCLR](https://img.shields.io/badge/LeanCLR-Runtime-181717?logo=github)](https://github.com/focus-creative-games/leanclr) [![license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/focus-creative-games/leanclr4unity/blob/main/LICENSE) [![Discord](https://img.shields.io/badge/Discord-Join-7289DA?logo=discord&logoColor=white)](https://discord.gg/esAYcM6RDQ)
+[![GitHub](https://img.shields.io/badge/GitHub-leanclr--unity-181717?logo=github)](https://github.com/focus-creative-games/leanclr-unity) [![Gitee](https://img.shields.io/badge/Gitee-leanclr--unity-C71D23?logo=gitee&logoColor=white)](https://gitee.com/focus-creative-games/leanclr-unity) [![LeanCLR](https://img.shields.io/badge/LeanCLR-Runtime-181717?logo=github)](https://github.com/focus-creative-games/leanclr) [![license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/focus-creative-games/leanclr-unity/blob/main/LICENSE) [![Discord](https://img.shields.io/badge/Discord-Join-7289DA?logo=discord&logoColor=white)](https://discord.gg/esAYcM6RDQ)
 
-**leanclr4unity** is the **Unity integration package** for [LeanCLR](https://github.com/focus-creative-games/leanclr/blob/main/README.md).
+**leanclr-unity** is the **Unity integration package** for [LeanCLR](https://github.com/focus-creative-games/leanclr/blob/main/README.md).
 
 This repository (package name `com.code-philosophy.leanclr`) is responsible for Unity Editor-side integration, build pipeline wiring, and release workflows. The **LeanCLR runtime** itself is maintained in a separate repository: [LeanCLR](https://github.com/focus-creative-games/leanclr).
 
@@ -31,14 +31,14 @@ For a complete background, comparisons with CoreCLR / Mono / IL2CPP, roadmap, an
 
 ### Sample project
 
-- [leanclr4unity_demo](https://github.com/focus-creative-games/leanclr4unity_demo)
+- [leanclr-unity_demo](https://github.com/focus-creative-games/leanclr-unity_demo)
 
 ### Installation
 
 In Unity Package Manager, click `Add package from git URL...`, then use either of the following:
 
-- `https://github.com/focus-creative-games/leanclr4unity.git`
-- `https://gitee.com/focus-creative-games/leanclr4unity.git`
+- `https://github.com/focus-creative-games/leanclr-unity.git`
+- `https://gitee.com/focus-creative-games/leanclr-unity.git`
 
 ### Settings
 
@@ -60,11 +60,11 @@ Options for **Lean AOT (leanaot)** during packaging. If you leave the nested obj
 
 No manual action is required. During release builds, this plugin automatically uses LeanCLR to replace IL2CPP.
 
-During the build, leanclr4unity invokes leanaot to copy all AOT DLLs to `Library/LeanCLR/ManagedStripped/{buildTarget}`. These AOT DLLs can be used for lazy loading.
+During the build, leanclr-unity invokes leanaot to copy all AOT DLLs to `Library/LeanCLR/ManagedStripped/{buildTarget}`. These AOT DLLs can be used for lazy loading.
 
 ### Notes
 
-- If a lazy-loaded assembly also has some code compiled into AOT (i.e., AOT is not fully disabled for that assembly in aot.xml), loading the lazy-loaded assembly at runtime requires it to match the **trimmed AOT DLL produced during the build** exactly. You cannot use assemblies from Compile Dll directly; you must use the trimmed AOT DLL from the build output. During the build, leanclr4unity invokes leanaot to copy all AOT DLLs to `Library/LeanCLR/ManagedStripped/{buildTarget}`; use the DLLs from that directory for lazy loading.
+- If a lazy-loaded assembly also has some code compiled into AOT (i.e., AOT is not fully disabled for that assembly in aot.xml), loading the lazy-loaded assembly at runtime requires it to match the **trimmed AOT DLL produced during the build** exactly. You cannot use assemblies from Compile Dll directly; you must use the trimmed AOT DLL from the build output. During the build, leanclr-unity invokes leanaot to copy all AOT DLLs to `Library/LeanCLR/ManagedStripped/{buildTarget}`; use the DLLs from that directory for lazy loading.
 
 ## Related repositories
 
@@ -81,4 +81,4 @@ During the build, leanclr4unity invokes leanaot to copy all AOT DLLs to `Library
 
 ## License
 
-Distributed under the [MIT License](https://github.com/focus-creative-games/leanclr4unity/blob/main/LICENSE).
+Distributed under the [MIT License](https://github.com/focus-creative-games/leanclr-unity/blob/main/LICENSE).
