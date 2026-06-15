@@ -33,6 +33,9 @@ namespace LeanCLR
         [Tooltip("When enabled, Lean AOT runs extra layout-related validation to catch native/managed layout mismatches earlier (diagnostics / strict workflows).")]
         public bool layoutValidation;
 
+        [Tooltip("Enable PGO profile instrumentation for LeanAOT/runtime integration.")]
+        public bool enablePgoProfile;
+
         [Tooltip("Paths to AOT rule files for Lean AOT (project-root-relative or absolute). Missing files fail the build. See Docs~/aot-rule-file.md in this package.")]
         public string[] ruleFiles;
 

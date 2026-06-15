@@ -128,6 +128,12 @@ namespace LeanCLR.BuildProcessors
                 sb.Append(" -DLEANCLR_GC_DEBUG=1");
             }
 
+            LeanAOTSettings aotSettings = Settings.Instance.leanAOTSettings;
+            if (aotSettings != null && aotSettings.enablePgoProfile)
+            {
+                sb.Append(" -DLEANCLR_PGO_PROFILE=1");
+            }
+
             if (lazyLoadedAssemblyNames != null && lazyLoadedAssemblyNames.Length > 0)
             {
                 string[] strippedNames = lazyLoadedAssemblyNames.Select(x => x.Trim()).Where(x => !string.IsNullOrEmpty(x)).ToArray();

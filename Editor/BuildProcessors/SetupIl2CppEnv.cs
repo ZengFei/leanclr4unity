@@ -68,6 +68,10 @@ namespace LeanCLR.BuildProcessors
             {
                 sb.Append(" --leanaot-enable-layout-validation");
             }
+            if (aot.enablePgoProfile)
+            {
+                sb.Append(" --leanaot-enable-pgo-profile=1");
+            }
             sb.Append($" --leanaot-managed-stripped-duplicate-path=\"{Settings.GetManagedStrippedDuplicatePath(target)}\"");
 
             AppendExistingFileArguments(sb, aot.ruleFiles, projectRoot, "--leanaot-aot-rule-file", "AOT rule file");
